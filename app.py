@@ -13,6 +13,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 db = SQL("sqlite:///birthdays.db")
 
 
+
 @app.after_request
 def after_request(response):
     """Ensure responses aren't cached"""
@@ -27,6 +28,12 @@ def index():
     if request.method == "POST":
 
         # TODO: Add the user's entry into the database
+        id = int(request.form.get("id")) + 1
+        name = request.form.get("name")
+        birth_day = request.form.get("birth_day")
+        birth_month = request.form.get("birth_month")
+        
+        db.execute("INSERT INTO birthdays (id, name, month, day) VALUES(?, ?, ?, ?)", id, name, birth_month, birth_day)
 
         return redirect("/")
 
@@ -34,7 +41,8 @@ def index():
 
         # TODO: Display the entries in the database on index.html
         birthdays = db.execute("SELECT * FROM birthdays")
+        id = len(birthdays)
 
-        return render_template("index.html", birthdays=birthdays)
+        return render_template("index.html", birthdays=birthdays, id=id)
 
 
